@@ -9,4 +9,10 @@ else
     cheap_flag=""
 fi
 
-goofys -f ${ENDPOINT:+--endpoint $ENDPOINT} --region $REGION --stat-cache-ttl $STAT_CACHE_TTL --type-cache-ttl $TYPE_CACHE_TTL --dir-mode $DIR_MODE --file-mode $FILE_MODE --uid $UID --gid $GID -o $MOUNT_ACCESS "$cheap_flag" $BUCKET $MOUNT_DIR
+if [[ -n $NO_IMPLICIT_DIR ]]; then
+    no_implicit_dir_flag="--no-implicit-dir"
+else
+    no_implicit_dir_flag=""
+fi
+
+goofys -f ${ENDPOINT:+--endpoint $ENDPOINT} --region $REGION --stat-cache-ttl $STAT_CACHE_TTL --type-cache-ttl $TYPE_CACHE_TTL --dir-mode $DIR_MODE --file-mode $FILE_MODE --uid $UID --gid $GID -o $MOUNT_ACCESS "$cheap_flag" "$no_implicit_dir_flag" $BUCKET $MOUNT_DIR
