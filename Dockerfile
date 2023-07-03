@@ -1,13 +1,14 @@
-FROM alpine:3.7
+FROM golang:1.20 as go
+RUN GOOS=linux GARCH=amd64 CGO_ENABLED=0 go install github.com/kahing/goofys@350ff312abaa1abcf21c5a06e143c7edffe9e2f4
 
-MAINTAINER Cloud Posse, LLC
+FROM alpine:3.18
 
-RUN apk update && apk add gcc ca-certificates openssl musl-dev git fuse syslog-ng coreutils curl
+RUN apk update && apk add gcc ca-certificates openssl musl-dev git fuse syslog-ng coreutils curl bash file
 
-ENV GOOFYS_VERSION 0.24.0
-RUN curl --fail -sSL -o /usr/local/bin/goofys https://github.com/kahing/goofys/releases/download/v${GOOFYS_VERSION}/goofys \
-    && chmod +x /usr/local/bin/goofys
-RUN curl -sSL -o /usr/local/bin/catfs https://github.com/kahing/catfs/releases/download/v0.8.0/catfs && chmod +x /usr/local/bin/catfs
+COPY --from=go /go/bin/goofys /usr/local/bin/goofys
+RUN chmod +x /usr/local/bin/goofys
+
+RUN curl -sSL -o /usr/local/bin/catfs https://github.com/kahing/catfs/releases/download/v0.9.0/catfs && chmod +x /usr/local/bin/catfs
 
 ARG ENDPOINT
 ENV MOUNT_DIR /mnt/s3
@@ -28,5 +29,5 @@ ADD rootfs/ /
 
 RUN chmod +x /usr/bin/run.sh
 
-ENTRYPOINT ["sh"]
+ENTRYPOINT ["bash"]
 CMD ["/usr/bin/run.sh"]
