@@ -15,4 +15,10 @@ else
     no_implicit_dir_flag=""
 fi
 
-goofys -f ${ENDPOINT:+--endpoint $ENDPOINT} --region $REGION --stat-cache-ttl $STAT_CACHE_TTL --type-cache-ttl $TYPE_CACHE_TTL --dir-mode $DIR_MODE --file-mode $FILE_MODE --uid $UID --gid $GID $MOUNT_OPTS "$cheap_flag" "$no_implicit_dir_flag" $BUCKET $MOUNT_DIR
+if [[ -n $CACHE_OPTS ]]; then
+    cache_opts_flag="--cache $CACHE_OPTS"
+else
+    cache_opts_flag=""
+fi
+
+goofys -f ${ENDPOINT:+--endpoint $ENDPOINT} --region $REGION --stat-cache-ttl $STAT_CACHE_TTL --type-cache-ttl $TYPE_CACHE_TTL --dir-mode $DIR_MODE --file-mode $FILE_MODE --uid $UID --gid $GID $MOUNT_OPTS "$cheap_flag" "$no_implicit_dir_flag" "$cache_opts_flag" $BUCKET $MOUNT_DIR
