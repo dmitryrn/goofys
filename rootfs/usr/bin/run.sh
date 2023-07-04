@@ -17,12 +17,12 @@ else
     no_implicit_dir_flag=""
 fi
 
-# if [[ -n "$CACHE_OPTS" ]]; then
-#     mkdir -p /tmp/cache
-#     RUST_LOG=catfs=debug
-#     cache_opts_flag='--cache /tmp/cache'
-# else
-#     cache_opts_flag=""
-# fi
+if [[ -n "$CACHE_OPTS" ]]; then
+    mkdir -p /cache
+    cache_opts_flag='--cache /cache'
+else
+    cache_opts_flag=""
+fi
 
-goofys --debug_s3 --debug_fuse -f ${ENDPOINT:+--endpoint $ENDPOINT} --region $REGION --stat-cache-ttl $STAT_CACHE_TTL --type-cache-ttl $TYPE_CACHE_TTL --dir-mode $DIR_MODE --file-mode $FILE_MODE --uid $UID --gid $GID $MOUNT_OPTS $cheap_flag $no_implicit_dir_flag $cache_opts_flag $BUCKET $MOUNT_DIR
+# cd /goofys
+goofys --debug_s3=true --debug_fuse=true -f ${ENDPOINT:+--endpoint $ENDPOINT} --region $REGION --stat-cache-ttl $STAT_CACHE_TTL --type-cache-ttl $TYPE_CACHE_TTL --dir-mode $DIR_MODE --file-mode $FILE_MODE --uid $UID --gid $GID $MOUNT_OPTS $cheap_flag $no_implicit_dir_flag $cache_opts_flag $BUCKET $MOUNT_DIR

@@ -3,12 +3,16 @@ RUN GOOS=linux GARCH=amd64 CGO_ENABLED=0 go install github.com/kahing/goofys@350
 
 FROM alpine:3.18
 
-RUN apk update && apk add gcc ca-certificates openssl musl-dev git fuse syslog-ng coreutils curl bash file
+RUN apk update && apk add gcc ca-certificates openssl musl-dev gcompat git fuse syslog-ng coreutils curl bash file go
 
 COPY --from=go /go/bin/goofys /usr/local/bin/goofys
 RUN chmod +x /usr/local/bin/goofys
 
 RUN curl -sSL -o /usr/local/bin/catfs https://github.com/kahing/catfs/releases/download/v0.9.0/catfs && chmod +x /usr/local/bin/catfs
+
+# ARG CACHE_BUST
+# COPY ./goofys /goofys
+# RUN cd /goofys && go mod download -x
 
 ARG ENDPOINT
 ENV MOUNT_DIR /mnt/s3
